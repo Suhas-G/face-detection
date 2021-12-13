@@ -12,15 +12,18 @@ DEVICE = 'cuda'
 WIDTH = 1200
 HEIGHT = 800
 
-def show(imgs: Union[Tensor, List[Tensor]], figsize = (8, 8)):
+def show(imgs: Union[Tensor, List[Tensor]], figsize = (8, 8), cols = None, rows = None):
     if not isinstance(imgs, list):
         imgs = [imgs]
-    fix, axs = plt.subplots(ncols=len(imgs), squeeze=False, figsize = figsize)
+    cols = len(imgs) if cols is None else cols
+    rows = 1 if rows is None else rows
+    fix, axs = plt.subplots(ncols=cols, nrows=rows, squeeze=False, figsize = figsize)
+    axs = axs.flatten()
     for i, img in enumerate(imgs):
         img = img.detach()
         img = F.to_pil_image(img.type(torch.uint8))
-        axs[0, i].imshow(np.asarray(img))
-        axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
+        axs[i].imshow(np.asarray(img))
+        axs[i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
 
 
 def save_checkpoint(model: torch.nn.Module, optimizer: torch.optim.Optimizer, 
